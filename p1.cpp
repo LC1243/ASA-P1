@@ -40,8 +40,7 @@ int MaxSquare() {
     int diagonal = 0;
     int j = 0;
     int i = N;
-    while( i  > 0 && j <= lines_limits[i-1]) {
-        std::cout << lines_limits[i-1] << std::endl;
+    while( i  > 0 && j < lines_limits[i-1]) {
         diagonal++;
         i--;
         j++;
