@@ -20,10 +20,10 @@ void initiateGrid() {
 
 }
 
-void displayGrid() {
-    for(long unsigned int i = 0; i < grid.size(); i++) {
-        for(long unsigned int j = 0; j < grid[i].size(); j++) {
-            std::cout << grid[i][j] << " ";
+void displayGrid(std::vector<std::vector<int>> grid_) {
+    for(long unsigned int i = 0; i < grid_.size(); i++) {
+        for(long unsigned int j = 0; j < grid_[i].size(); j++) {
+            std::cout << grid_[i][j] << " ";
         }
         std::cout << std::endl;
     }
@@ -94,18 +94,48 @@ std::vector<int> decreaseLimit(std::vector<int> limites_linhas, int size){
     return limites_linhas;
 }
 
+/* Falta mudar as coordenadas do ponto após a recursão*/
+// returns the x coordinate of the next point where recursion starts
+// grid[x][y]
+int getXposition(std::vector<std::vector<int>> grid_) {
+    for(long unsigned int i = grid_.size(); i > 0; i--) {
+        for(long unsigned int j = grid_[i].size(); j > 0; j--) {
+            if(grid_[i][j] == 0)
+                return i;
+        }
+    }
+    return 0;
+}
 
-void solve(int x, int y, std::vector<int> limites_linhas, std::vector<std::vector<int>> grid_){
+int getYposition(std::vector<std::vector<int>> grid_) {
+    for(long unsigned int i = grid_.size(); i > 0; i--) {
+        for(long unsigned int j = grid_[i].size(); j > 0; j--) {
+            if(grid_[i][j] == 0)
+                return j;
+        }
+    }
+    return 0;
+}
 
-    if ( std::adjacent_find( limites_linhas.begin(), limites_linhas.end(), std::not_equal_to<int>() ) == limites_linhas.end() ){
+int solve(int x, int y, std::vector<int> limites_linhas, std::vector<std::vector<int>> grid_){
+
+    if (std::all_of(limites_linhas.cbegin(), limites_linhas.cend(), [](int i){ return i == 0; })){
         combinacoes++;
-        return;
+        return combinacoes;
     }
 
     if(x > limites_linhas[y])
         solve(x-1, y, limites_linhas, grid_);
 
     //Corpo da função
+    if(canBuildSquare(x, y, grid_[x][y] + 1, grid_ ) ) {
+        std::vector<std::vector<int>> new_grid_ = 
+        buildSquare(x, y, grid_[x][y] + 1, limites_linhas, grid_);
+        std::vector<int> new_line_limits = 
+        decreaseLimit(limites_linhas, grid_[x][y] + 1);
+        return solve(x,y, limites_linhas, grid_) + solve(x,y, new_line_limits, new_grid_);
+    }
+    return solve(x,y, limites_linhas, grid_);
 
     if(1){
 
@@ -124,6 +154,8 @@ void solve(int x, int y, std::vector<int> limites_linhas, std::vector<std::vecto
 int main() {
     getInput();
     initiateGrid();
-    displayGrid();
+    displayGrid(grid);
+    solve(M-1, N-1, lines_limits, grid);
+    std::cout << combinacoes << std::endl;
     return 0;
 }
