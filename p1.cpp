@@ -155,10 +155,8 @@ int solve(int x, int y, std::vector<int> limites_linhas, std::vector<std::vector
     if(x > limites_linhas[y-1])
         solve(x-1, y, limites_linhas, grid_);
     */
-    //Corpo da função
-    while(i  < X) {
-        if(canBuildSquare(y, x, grid_[y][x] + i, grid_ ) && 
-            squareSizeUsed(y, x, (grid_[y][x] + 1)) ==  false && grid_[y][x] + 1 > 1) {
+    if(canBuildSquare(y, x, grid_[y][x] + 1, grid_ ) && 
+            squareSizeUsed(y, x, (grid_[y][x] + 1)) ==  false && grid_[y][x] + 1 >= 1) {
 
             std::vector<std::vector<int>> new_grid = 
             buildSquare(x, y, grid_[y][x] + 1, limites_linhas, grid_);
@@ -183,12 +181,12 @@ int solve(int x, int y, std::vector<int> limites_linhas, std::vector<std::vector
         //std::cout << y1 << " " << x1 << std::endl;
         // get x and y position for next call 
         // generates infinite recursion
-        i++;
-        return solve(x,y, limites_linhas, grid_) + solve(x1,y1, new_line_limits, new_grid);
+        return solve(x1,y1, new_line_limits, new_grid);
+        //solve(x,y, limites_linhas, grid_) + solve(x1,y1, new_line_limits, new_grid);
      
         }
-        i++;
-    }
+        //i++;
+    //}
     /*
     if(grid_[y][x] + 1 != 1 && canBuildSquare(y, x, grid_[y][x] + 1, grid_ )) {
         
@@ -224,7 +222,6 @@ int solve(int x, int y, std::vector<int> limites_linhas, std::vector<std::vector
 int main() {
     getInput();
     initiateGrid();
-    //solve(grid[N-1.back(), N-1, lines_limits, grid);
     if(N == 0 || M == 0) {
         std::cout << combinacoes << std::endl;
         return 0;
