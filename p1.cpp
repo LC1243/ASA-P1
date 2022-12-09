@@ -78,12 +78,12 @@ int MaxSquare() {
 }
 
 // y -> line, x -> column
-bool canBuildSquare(int y, int x, int size, std::vector<std::vector<int>> grid_){
+bool canBuildSquare(int y, int x, int size, std::vector<int> limites_linhas, std::vector<std::vector<int>> grid_){
     if(x < size - 1 || y < size - 1 || size > MaxSquare() )
         return false;
 
     //this if it's correct?
-    if(y > lines_limits[N - size])
+    if(x >= limites_linhas[y - size + 1])
         return false;
 
     for(int i = 0; i < size; i++){
@@ -109,10 +109,10 @@ std::vector<std::vector<int>> buildSquare(int x, int y, int size, std::vector<in
 
 // Finished 
 std::vector<int> decreaseLimit(std::vector<std::vector<int>> grid_, std::vector<int> limites_linhas){
-    int cont = 0;
+
     std::vector<int> new_line_limits = limites_linhas;
 
-    for (int i = 0; i < grid_.size(); i++)
+    for (unsigned int i = 0; i < grid_.size(); i++)
         if( std::all_of(grid_[i].begin(), grid_[i].end(), [](int j) { return j != 0; }) )
             new_line_limits[i] = 0;
                
@@ -128,7 +128,6 @@ int getYposition(std::vector<std::vector<int>> grids) {
     for(int i = grids.size() - 1; i >= 0; i--) {
         for(int j = grids[i].size() - 1; j >= 0; j--) {
             if(grids[i][j] == 0) {
-                std::cout << "line:" << i << std::endl;
                 return i;
             }
         }
@@ -141,7 +140,6 @@ int getXposition(std::vector<std::vector<int>> grids) {
     for(int i = grids.size() - 1; i >= 0; i--) {
         for(int j = grids[i].size() - 1; j >= 0; j--) {
             if(grids[i][j] == 0) {
-                std::cout << "column:" << j << " ";
                 return j;
             }
         }
@@ -161,7 +159,7 @@ int solve(int x, int y, std::vector<int> limites_linhas, std::vector<std::vector
     if(x > limites_linhas[y-1])
         solve(x-1, y, limites_linhas, grid_);
     */
-    if(canBuildSquare(y, x, square_size, grid_ ) /*&& 
+    if(canBuildSquare(y, x, square_size, limites_linhas, grid_ ) /*&& 
             squareSizeUsed(y, x, (square_size)) ==  false */) {
 
             std::vector<std::vector<int>> new_grid = 
@@ -171,17 +169,7 @@ int solve(int x, int y, std::vector<int> limites_linhas, std::vector<std::vector
 
             std::vector<int> new_line_limits = 
             decreaseLimit(new_grid, limites_linhas);
-        
-        //shows output for debugging
-        std::cout << "line limits: ";
-        for (const int& i : new_line_limits) {
-            std::cout << i << " ";
-        }
-        std::cout << std::endl;
-
-        displayGrid(new_grid);
-        
-        
+      
         int x1 = getXposition(new_grid);
         int y1 = getYposition(new_grid);
         //std::cout << y1 << " " << x1 << std::endl;
@@ -232,7 +220,11 @@ int main() {
         std::cout << combinacoes << std::endl;
         return 0;
     }
+    if (std::all_of(lines_limits.cbegin(), lines_limits.cend(), [](int i){ return i == 0; })){
+        std::cout << combinacoes << std::endl;
+        return 0;
+    }
     solve(lines_limits[N-1] - 1, N-1, lines_limits, grid, 1);
-    std::cout << "combinations " << combinacoes << std::endl;
+    std::cout << combinacoes << std::endl;
     return 0;
 }
