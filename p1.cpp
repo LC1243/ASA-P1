@@ -187,7 +187,8 @@ int solve(int x, int y, std::vector<int> limites_linhas, std::vector<std::vector
         return solve(x1,y1, new_line_limits, new_grid);
      
     }
-    if(grid_[y][x] + 1 && canBuildSquare(y, x, grid_[y][x] + 1, grid_ )) {
+    
+    if(grid_[y][x] + 1 ==  1 && canBuildSquare(y, x, grid_[y][x] + 1, grid_ )) {
         
         std::vector<std::vector<int>> new_grid = 
         buildSquare(x, y, grid_[y][x] + 1, limites_linhas, grid_);
@@ -205,8 +206,8 @@ int solve(int x, int y, std::vector<int> limites_linhas, std::vector<std::vector
         std::cout << std::endl;
         displayGrid(new_grid);
 
-        int x1 = getXposition(grid_);
-        int y1 = getYposition(grid_);
+        int x1 = getXposition(new_grid);
+        int y1 = getYposition(new_grid);
         return solve(x1,y1,new_line_limits, new_grid);
 
     }
@@ -227,6 +228,6 @@ int main() {
         return 0;
     }
     solve(lines_limits[N-1] - 1, N-1, lines_limits, grid);
-    std::cout << combinacoes << std::endl;
+    std::cout << "combinations " << combinacoes << std::endl;
     return 0;
 }
