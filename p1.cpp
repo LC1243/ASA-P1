@@ -3,22 +3,24 @@
 #include <iterator>
 #include <algorithm>
 #include <functional>
-
+#include <unistd.h>
 int N, M; // Num linhas, N colunas
 int combinacoes;
 
 std::vector<int> lines_limits;
-std::vector<std::vector<int>> square_sizes;
+std::vector<std::vector<long int>> square_sizes;
 std::vector<std::vector<int>> grid;
 
 void initiateGrid() {
     for (int i = 0; i < N; i++) {
         std::vector<int> v1;
+        std::vector<long int>v2;
         for (int j = 0; j < lines_limits[i]; j++) {
             v1.push_back(0);
+            v2.push_back(0);
         }
     grid.push_back(v1);
-    square_sizes.push_back(v1);
+    square_sizes.push_back(v2);
     }
 
 }
@@ -49,8 +51,9 @@ void storeSquareSize(int y, int x, int size) {
 bool squareSizeUsed(int y, int x, int digit) {
     std::string digit_str = std::to_string(digit);
     std::string number_str = std::to_string(square_sizes[y][x]);
-    if (number_str.find_first_of(digit) != std::string::npos) 
+    if (std::string::npos != number_str.find_first_of(digit_str)) {
         return true;
+    }
     return false;
 
 }
@@ -75,8 +78,8 @@ int MaxSquare() {
 }
 
 // x -> line, y -> column
-bool canBuildSquare(int x, int y, int size, std::vector<std::vector<int>> grid_){
-    if(/*x + 1 == size || y+1 == size ||*/ size > MaxSquare() )
+bool canBuildSquare(int y, int x, int size, std::vector<std::vector<int>> grid_){
+    if(x < size - 1 || y < size - 1 || size > MaxSquare() )
         return false;
 
     //this if it's correct?
@@ -93,7 +96,7 @@ std::vector<std::vector<int>> buildSquare(int x, int y, int size, std::vector<in
     
     for(int i = 0; i < size; i++)
         for(int j = 0; j < size; j++)
-            new_grid[y-i][x-j]++;
+            new_grid[y-i][x-j] += size;
 
     return new_grid;
 }
@@ -143,9 +146,8 @@ int getXposition(std::vector<std::vector<int>> grids) {
 }
 
 // x -> column, y -> line
-int solve(int x, int y, std::vector<int> limites_linhas, std::vector<std::vector<int>> grid_) {
-    int X = MaxSquare();
-    int i = 1;
+int solve(int x, int y, std::vector<int> limites_linhas, std::vector<std::vector<int>> grid_, int square_size) {
+   
     if (std::all_of(limites_linhas.cbegin(), limites_linhas.cend(), [](int i){ return i == 0; })){
         combinacoes++;
         return combinacoes;
@@ -155,16 +157,16 @@ int solve(int x, int y, std::vector<int> limites_linhas, std::vector<std::vector
     if(x > limites_linhas[y-1])
         solve(x-1, y, limites_linhas, grid_);
     */
-    if(canBuildSquare(y, x, grid_[y][x] + 1, grid_ ) && 
-            squareSizeUsed(y, x, (grid_[y][x] + 1)) ==  false && grid_[y][x] + 1 >= 1) {
+    if(canBuildSquare(y, x, square_size, grid_ ) /*&& 
+            squareSizeUsed(y, x, (square_size)) ==  false */) {
 
             std::vector<std::vector<int>> new_grid = 
-            buildSquare(x, y, grid_[y][x] + 1, limites_linhas, grid_);
+            buildSquare(x, y, square_size, limites_linhas, grid_);
 
-            storeSquareSize(y, x, grid_[y][x] + 1);
+            storeSquareSize(y, x, square_size);
 
             std::vector<int> new_line_limits = 
-            decreaseLimit(limites_linhas, grid_[y][x] + 1);
+            decreaseLimit(limites_linhas, square_size);
         
         //shows output for debugging
         std::cout << "line limits: ";
@@ -181,8 +183,8 @@ int solve(int x, int y, std::vector<int> limites_linhas, std::vector<std::vector
         //std::cout << y1 << " " << x1 << std::endl;
         // get x and y position for next call 
         // generates infinite recursion
-        return solve(x1,y1, new_line_limits, new_grid);
-        //solve(x,y, limites_linhas, grid_) + solve(x1,y1, new_line_limits, new_grid);
+        sleep(1);
+        return solve(x,y, limites_linhas, grid_, square_size + 1) + solve(x1,y1, new_line_limits, new_grid, square_size);
      
         }
         //i++;
@@ -226,7 +228,7 @@ int main() {
         std::cout << combinacoes << std::endl;
         return 0;
     }
-    solve(lines_limits[N-1] - 1, N-1, lines_limits, grid);
+    solve(lines_limits[N-1] - 1, N-1, lines_limits, grid, 1);
     std::cout << "combinations " << combinacoes << std::endl;
     return 0;
 }
