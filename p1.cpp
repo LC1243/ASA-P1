@@ -77,7 +77,7 @@ int MaxSquare() {
     }
 }
 
-// x -> line, y -> column
+// y -> line, x -> column
 bool canBuildSquare(int y, int x, int size, std::vector<std::vector<int>> grid_){
     if(x < size - 1 || y < size - 1 || size > MaxSquare() )
         return false;
@@ -102,16 +102,14 @@ std::vector<std::vector<int>> buildSquare(int x, int y, int size, std::vector<in
 }
 
 // Finished 
-std::vector<int> decreaseLimit(std::vector<int> limites_linhas, int size){
+std::vector<int> decreaseLimit(std::vector<std::vector<int>> grid_, std::vector<int> limites_linhas){
     int cont = 0;
     std::vector<int> new_line_limits = limites_linhas;
 
-    for (int i = new_line_limits.size() - 1; i >= 0; i--){
-        if(cont < size && new_line_limits[i] != 0){
-            new_line_limits[i] -= size;
-            cont++;
-        }
-    }
+    for (int i = 0; i < grid_.size(); i++)
+        if( std::all_of(grid_[i].begin(), grid_[i].end(), [](int j) { return j != 0; }) )
+            new_line_limits[i] = 0;
+               
     return new_line_limits;
 }
 
@@ -166,7 +164,7 @@ int solve(int x, int y, std::vector<int> limites_linhas, std::vector<std::vector
             storeSquareSize(y, x, square_size);
 
             std::vector<int> new_line_limits = 
-            decreaseLimit(limites_linhas, square_size);
+            decreaseLimit(new_grid, limites_linhas);
         
         //shows output for debugging
         std::cout << "line limits: ";
@@ -176,13 +174,15 @@ int solve(int x, int y, std::vector<int> limites_linhas, std::vector<std::vector
         std::cout << std::endl;
 
         displayGrid(new_grid);
-
+        
         
         int x1 = getXposition(new_grid);
         int y1 = getYposition(new_grid);
         //std::cout << y1 << " " << x1 << std::endl;
         // get x and y position for next call 
         // generates infinite recursion
+        printf("%d\n\n", canBuildSquare(y1, x1, 1, new_grid) );
+
         sleep(1);
         return solve(x,y, limites_linhas, grid_, square_size + 1) + solve(x1,y1, new_line_limits, new_grid, square_size);
      
