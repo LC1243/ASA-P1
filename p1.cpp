@@ -86,6 +86,12 @@ bool canBuildSquare(int y, int x, int size, std::vector<std::vector<int>> grid_)
     if(y > lines_limits[N - size])
         return false;
 
+    for(int i = 0; i < size; i++){
+        for(int j = 0; j < size; j++){
+            if(grid_[y-i][x-j] != 0)
+                return false;
+        }
+    }
     return true;
 }
 
@@ -181,10 +187,8 @@ int solve(int x, int y, std::vector<int> limites_linhas, std::vector<std::vector
         //std::cout << y1 << " " << x1 << std::endl;
         // get x and y position for next call 
         // generates infinite recursion
-        printf("%d\n\n", canBuildSquare(y1, x1, 1, new_grid) );
 
-        sleep(1);
-        return solve(x,y, limites_linhas, grid_, square_size + 1) + solve(x1,y1, new_line_limits, new_grid, square_size);
+        return solve(x,y, limites_linhas, grid_, square_size + 1) + solve(x1,y1, new_line_limits, new_grid, 1);
      
         }
         //i++;
