@@ -143,8 +143,9 @@ int getXposition(std::vector<std::vector<int>> grids) {
 }
 
 // x -> column, y -> line
-int solve(int x, int y, std::vector<int> limites_linhas, std::vector<std::vector<int>> grid_){
-
+int solve(int x, int y, std::vector<int> limites_linhas, std::vector<std::vector<int>> grid_) {
+    int X = MaxSquare();
+    int i = 1;
     if (std::all_of(limites_linhas.cbegin(), limites_linhas.cend(), [](int i){ return i == 0; })){
         combinacoes++;
         return combinacoes;
@@ -155,17 +156,17 @@ int solve(int x, int y, std::vector<int> limites_linhas, std::vector<std::vector
         solve(x-1, y, limites_linhas, grid_);
     */
     //Corpo da função
-    
-    if(canBuildSquare(y, x, grid_[y][x] + 1, grid_ ) && 
-        squareSizeUsed(y, x, (grid_[y][x] + 1)) ==  false && grid_[y][x] + 1 > 1) {
+    while(i  < X) {
+        if(canBuildSquare(y, x, grid_[y][x] + i, grid_ ) && 
+            squareSizeUsed(y, x, (grid_[y][x] + 1)) ==  false && grid_[y][x] + 1 > 1) {
 
-        std::vector<std::vector<int>> new_grid = 
-        buildSquare(x, y, grid_[y][x] + 1, limites_linhas, grid_);
+            std::vector<std::vector<int>> new_grid = 
+            buildSquare(x, y, grid_[y][x] + 1, limites_linhas, grid_);
 
-        storeSquareSize(y, x, grid_[y][x] + 1);
-      
-        std::vector<int> new_line_limits = 
-        decreaseLimit(limites_linhas, grid_[y][x] + 1);
+            storeSquareSize(y, x, grid_[y][x] + 1);
+
+            std::vector<int> new_line_limits = 
+            decreaseLimit(limites_linhas, grid_[y][x] + 1);
         
         //shows output for debugging
         std::cout << "line limits: ";
@@ -182,13 +183,14 @@ int solve(int x, int y, std::vector<int> limites_linhas, std::vector<std::vector
         //std::cout << y1 << " " << x1 << std::endl;
         // get x and y position for next call 
         // generates infinite recursion
-        
-        //return solve(x,y, limites_linhas, grid_) + 
-        return solve(x1,y1, new_line_limits, new_grid);
+        i++;
+        return solve(x,y, limites_linhas, grid_) + solve(x1,y1, new_line_limits, new_grid);
      
+        }
+        i++;
     }
-    
-    if(grid_[y][x] + 1 ==  1 && canBuildSquare(y, x, grid_[y][x] + 1, grid_ )) {
+    /*
+    if(grid_[y][x] + 1 != 1 && canBuildSquare(y, x, grid_[y][x] + 1, grid_ )) {
         
         std::vector<std::vector<int>> new_grid = 
         buildSquare(x, y, grid_[y][x] + 1, limites_linhas, grid_);
@@ -211,7 +213,7 @@ int solve(int x, int y, std::vector<int> limites_linhas, std::vector<std::vector
         return solve(x1,y1,new_line_limits, new_grid);
 
     }
-    
+    */
     /*
     else
         solve(x-1, y, limites_linhas, grid_);
