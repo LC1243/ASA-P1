@@ -95,26 +95,21 @@ std::vector<int> decreaseLimit(std::vector<std::vector<int>> grid_, std::vector<
 
 // x -> column, y -> line
 int solve(int x, int y, std::vector<int> limites_linhas, std::vector<std::vector<int>> grid_, int square_size) {
-   
+
     if (std::all_of(limites_linhas.cbegin(), limites_linhas.cend(), [](int i){ return i == 0; })){
         combinacoes++;
         return combinacoes;
     }
 
-    /* Penso que não é preciso porque a grid só tem os pontos onde pode haver quadrados
-    if(x > limites_linhas[y-1])
-        solve(x-1, y, limites_linhas, grid_);
-    */
-    if(canBuildSquare(y, x, square_size, limites_linhas, grid_ ) /*&& 
-            squareSizeUsed(y, x, (square_size)) ==  false */) {
+    if(square_size == 1 || canBuildSquare(y, x, square_size, limites_linhas, grid_ ) ) {
 
-            std::vector<std::vector<int>> new_grid = 
-            buildSquare(x, y, square_size, limites_linhas, grid_);
+        std::vector<std::vector<int>> new_grid = 
+        buildSquare(x, y, square_size, limites_linhas, grid_);
 
-            std::vector<int> new_line_limits = 
-            decreaseLimit(new_grid, limites_linhas);
+        std::vector<int> new_line_limits = 
+        decreaseLimit(new_grid, limites_linhas);
 
-
+    	// Get x and y coordinates
         int x1 = -1; 
         int y1 = -1;
         
@@ -131,8 +126,8 @@ int solve(int x, int y, std::vector<int> limites_linhas, std::vector<std::vector
         }
 
         return solve(x,y, limites_linhas, grid_, square_size + 1) + solve(x1,y1, new_line_limits, new_grid, 1);
-        }
-        
+    }
+   
     return 0;
 }
 
@@ -150,6 +145,7 @@ void initiateGrid() {
 int main() {
     getInput();
     initiateGrid();
+
     if(N == 0 || M == 0) {
         std::cout << combinacoes << std::endl;
         return 0;
