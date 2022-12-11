@@ -68,8 +68,7 @@ bool canBuildSquare(int y, int x, int size, std::vector<int> limites_linhas, std
 
 // Finished 
 // x -> column, y -> line
-std::vector<std::vector<int>> buildSquare(int x, int y, int size, std::vector<int> limites_linhas, std::vector<std::vector<int>> grid_){
-    std::vector<std::vector<int>> new_grid = grid_;
+std::vector<std::vector<int>> buildSquare(int x, int y, int size, std::vector<int> limites_linhas, std::vector<std::vector<int>> new_grid){
     
     for(int i = 0; i < size; i++)
         for(int j = 0; j < size; j++)
@@ -79,9 +78,8 @@ std::vector<std::vector<int>> buildSquare(int x, int y, int size, std::vector<in
 }
 
 // Finished 
-std::vector<int> decreaseLimit(std::vector<std::vector<int>> grid_, std::vector<int> limites_linhas){
+std::vector<int> decreaseLimit(std::vector<std::vector<int>> grid_, std::vector<int> new_line_limits){
 
-    std::vector<int> new_line_limits = limites_linhas;
 
     for (unsigned int i = 0; i < grid_.size(); i++)
         if( std::all_of(grid_[i].begin(), grid_[i].end(), [](int j) { return j != 0; }) )
