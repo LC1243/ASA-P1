@@ -20,6 +20,12 @@ void displayGrid(std::vector<std::vector<int>> grid_) {
         std::cout << std::endl;
     }
 }
+void display_vector(const std::vector<int> &v)
+{
+    std::copy(v.begin(), v.end(),
+        std::ostream_iterator<int>(std::cout, " "));
+}
+
 void getInput() {
     int c;
     std::cin >> N;
@@ -100,17 +106,19 @@ int solve(int x, int y, std::vector<int> limites_linhas, std::vector<std::vector
         return 1;
     }
 
-    if(square_size == 1 || canBuildSquare(y, x, square_size, limites_linhas, grid_ ) ) {
+    while(limites_linhas[y2] != 0){
 
-        std::vector<std::vector<int>> new_grid = 
-        buildSquare(x, y, square_size, limites_linhas, grid_);
 
-        std::vector<int> new_line_limits = 
-        decreaseLimit(new_grid, limites_linhas);
+    if(square_size == 1 || canBuildSquare(y, x, sq_sz2, limites_linhas, grid_ ) ) {
+
+
+        new_grid = buildSquare(x, y, sq_sz2, limites_linhas, grid_);
+
+        new_line_limits = decreaseLimit(new_grid, limites_linhas);
 
     	// Get x and y coordinates
-        int x1 = -1; 
-        int y1 = -1;
+        x1 = -1; 
+        y1 = -1;
         
         for(int i = new_grid.size() - 1; i >= 0; i--) {
             for(int j = new_grid[i].size() - 1; j >= 0; j--) {
@@ -124,9 +132,32 @@ int solve(int x, int y, std::vector<int> limites_linhas, std::vector<std::vector
                 break;
         }
 
-        return solve(x,y, limites_linhas, grid_, square_size + 1) + solve(x1,y1, new_line_limits, new_grid, 1);
+    x = x1;
+    y = y1;
+    limites_linhas = new_line_limits;
+    grid_ = new_grid;
+    sq_sz2 = 1;
+    displayGrid(new_grid);
+    printf("\n");
+    display_vector(new_line_limits);
+    printf("\n");
+    sleep(1);
+    
     }
-   
+    }
+    for(int i = new_grid.size() - 1; i >= 0; i--) {
+            for(int j = new_grid[i].size() - 1; j >= 0; j--) {
+                if(new_grid[i][j] == 0) {
+                    y1 = i;
+                    x1 = j;
+                    break;
+                }
+            }
+            if(y1 == i)
+                break;
+    }
+    printf("%d, %d\n", x1, y1);
+   return solve(x2,y2, line_lims2, grid2, square_size + 1) + solve(x1,y1, new_line_limits, new_grid, 1);
     return 0;
 }
 
