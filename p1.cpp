@@ -3,7 +3,6 @@
 #include <iterator>
 #include <algorithm>
 #include <functional>
-#include <unistd.h>
 
 
 int N, M; // Num linhas, N colunas
@@ -60,11 +59,10 @@ bool canBuildSquare(int y, int x, int size, std::vector<int> limites_linhas, std
     if(x >= limites_linhas[y - size + 1])
         return false;
 
-    for(int i = 0; i < size; i++){
-        for(int j = 0; j < size; j++){
-            if(grid_[y-i][x-j] != 0)
-                return false;
-        }
+    
+    for(int j = 0; j < size; j++){ //changed: apenas dá scan à última linha (as de cima não são necessárias) -> poupa (size^2 - size) iterações
+        if(grid_[y][x-j] != 0)
+            return false;
     }
     return true;
 }
@@ -95,10 +93,11 @@ std::vector<int> decreaseLimit(std::vector<std::vector<int>> grid_, std::vector<
 
 // x -> column, y -> line
 int solve(int x, int y, std::vector<int> limites_linhas, std::vector<std::vector<int>> grid_, int square_size) {
-
-    if (std::all_of(limites_linhas.cbegin(), limites_linhas.cend(), [](int i){ return i == 0; })){
-        combinacoes++;
-        return combinacoes;
+    std::vector<int> lims = limites_linhas; //changed -> caso sobre apenas a primeira linha, não constrói os quadrados de 1 individualmente (not needed)
+    lims.erase(lims.begin());
+   
+    if (std::all_of(lims.cbegin(), lims.cend(), [](int i){return i == 0;})){
+        return 1;
     }
 
     if(square_size == 1 || canBuildSquare(y, x, square_size, limites_linhas, grid_ ) ) {
@@ -154,7 +153,7 @@ int main() {
         std::cout << combinacoes << std::endl;
         return 0;
     }
-    solve(lines_limits[N-1] - 1, N-1, lines_limits, grid, 1);
+    combinacoes = solve(lines_limits[N-1] - 1, N-1, lines_limits, grid, 1);
     std::cout << combinacoes << std::endl;
     return 0;
 }
