@@ -20,12 +20,6 @@ void displayGrid(std::vector<std::vector<int>> grid_) {
         std::cout << std::endl;
     }
 }
-void display_vector(const std::vector<int> &v)
-{
-    std::copy(v.begin(), v.end(),
-        std::ostream_iterator<int>(std::cout, " "));
-}
-
 void getInput() {
     int c;
     std::cin >> N;
@@ -65,8 +59,7 @@ bool canBuildSquare(int y, int x, int size, std::vector<int> limites_linhas, std
     if(x >= limites_linhas[y - size + 1])
         return false;
 
-    
-    for(int j = 0; j < size; j++){ //changed: apenas dá scan à última linha (as de cima não são necessárias) -> poupa (size^2 - size) iterações
+    for(int j = 0; j < size; j++){
         if(grid_[y][x-j] != 0)
             return false;
     }
@@ -99,26 +92,25 @@ std::vector<int> decreaseLimit(std::vector<std::vector<int>> grid_, std::vector<
 
 // x -> column, y -> line
 int solve(int x, int y, std::vector<int> limites_linhas, std::vector<std::vector<int>> grid_, int square_size) {
-    std::vector<int> lims = limites_linhas; //changed -> caso sobre apenas a primeira linha, não constrói os quadrados de 1 individualmente (not needed)
-    lims.erase(lims.begin());
-   
-    if (std::all_of(lims.cbegin(), lims.cend(), [](int i){return i == 0;})){
-        return 1;
+    std::vector<int> lims = limites_linhas;
+    lims.erase(lims.cbegin());
+
+    if (std::all_of(lims.cbegin(), lims.cend(), [](int i){ return i == 0; })){
+        combinacoes++;
+        return combinacoes;
     }
 
-    while(limites_linhas[y2] != 0){
+    if(square_size == 1 || canBuildSquare(y, x, square_size, limites_linhas, grid_ ) ) {
 
+        std::vector<std::vector<int>> new_grid = 
+        buildSquare(x, y, square_size, limites_linhas, grid_);
 
-    if(square_size == 1 || canBuildSquare(y, x, sq_sz2, limites_linhas, grid_ ) ) {
-
-
-        new_grid = buildSquare(x, y, sq_sz2, limites_linhas, grid_);
-
-        new_line_limits = decreaseLimit(new_grid, limites_linhas);
+        std::vector<int> new_line_limits = 
+        decreaseLimit(new_grid, limites_linhas);
 
     	// Get x and y coordinates
-        x1 = -1; 
-        y1 = -1;
+        int x1 = -1; 
+        int y1 = -1;
         
         for(int i = new_grid.size() - 1; i >= 0; i--) {
             for(int j = new_grid[i].size() - 1; j >= 0; j--) {
@@ -132,32 +124,9 @@ int solve(int x, int y, std::vector<int> limites_linhas, std::vector<std::vector
                 break;
         }
 
-    x = x1;
-    y = y1;
-    limites_linhas = new_line_limits;
-    grid_ = new_grid;
-    sq_sz2 = 1;
-    displayGrid(new_grid);
-    printf("\n");
-    display_vector(new_line_limits);
-    printf("\n");
-    sleep(1);
-    
+        return solve(x,y, limites_linhas, grid_, square_size + 1) + solve(x1,y1, new_line_limits, new_grid, 1);
     }
-    }
-    for(int i = new_grid.size() - 1; i >= 0; i--) {
-            for(int j = new_grid[i].size() - 1; j >= 0; j--) {
-                if(new_grid[i][j] == 0) {
-                    y1 = i;
-                    x1 = j;
-                    break;
-                }
-            }
-            if(y1 == i)
-                break;
-    }
-    printf("%d, %d\n", x1, y1);
-   return solve(x2,y2, line_lims2, grid2, square_size + 1) + solve(x1,y1, new_line_limits, new_grid, 1);
+   
     return 0;
 }
 
@@ -184,7 +153,7 @@ int main() {
         std::cout << combinacoes << std::endl;
         return 0;
     }
-    combinacoes = solve(lines_limits[N-1] - 1, N-1, lines_limits, grid, 1);
+    solve(lines_limits[N-1] - 1, N-1, lines_limits, grid, 1);
     std::cout << combinacoes << std::endl;
     return 0;
 }
