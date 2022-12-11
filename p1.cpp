@@ -108,11 +108,9 @@ int solve(int x, int y, std::vector<int> limites_linhas, int square_size) {
                 combinacoes++;
                 return combinacoes;
             }
-        }
-        
+        }     
         columns_configs.push_back(new_line_limits);
         */
-
         return solve(x,y, limites_linhas, square_size + 1) + solve(x2,y2, new_line_limits, 1);
     }
    
