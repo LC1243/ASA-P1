@@ -6,12 +6,12 @@
 #include<unistd.h>
 
 int N, M; // Num linhas, N colunas
-long int combinacoes;
+long long int combinacoes;
 int max_square;
 
 std::vector<int> lines_limits;
 std::vector<std::vector<int>> columns_configs;
-
+std::vector<long long int> memos;
 
 void getInput() {
     int c;
@@ -76,7 +76,7 @@ void display_vector(const std::vector<int> &v)
 }
 
 // x -> column, y -> line
-int solve(int x, int y, std::vector<int> limites_linhas, int square_size) {
+long long int solve(int x, int y, std::vector<int> limites_linhas, int square_size) {
     std::vector<int> lims = limites_linhas;
     lims.erase(lims.begin());
     int x2 = 0;
@@ -105,11 +105,13 @@ int solve(int x, int y, std::vector<int> limites_linhas, int square_size) {
         y2 = index;
 
 
-        long int combs_new = -1;
+        long long int combs_new = -1;
+        long long int combs_same;
         
         for(unsigned int i = 0; i < columns_configs.size(); i++) {
             if(std::equal(new_line_limits.begin(), new_line_limits.end(), columns_configs[i].begin()) ) {
-                combs_new = columns_configs[i][new_line_limits.size()];             
+                combs_new = memos[i];    
+                printf("%lld\n", memos[i]);       
                 break;
             } 
         }     
@@ -118,11 +120,12 @@ int solve(int x, int y, std::vector<int> limites_linhas, int square_size) {
             std::vector<int> lims_new;
             
             combs_new = solve(x2,y2, new_line_limits, 1);
-            lims_new = new_line_limits;
-            lims_new.push_back(combs_new);
-            columns_configs.push_back(lims_new);
+            
+            columns_configs.push_back(new_line_limits);
+            memos.push_back(combs_new);
         }
-    long int combs_same = solve(x,y, limites_linhas, square_size + 1);
+        combs_same = solve(x,y, limites_linhas, square_size + 1);
+
         return combs_new + combs_same;
     }
    
