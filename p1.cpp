@@ -12,6 +12,7 @@ int max_square;
 std::vector<int> lines_limits;
 std::vector<std::vector<int>> columns_configs;
 
+
 void getInput() {
     int c;
     std::cin >> N;
@@ -71,19 +72,19 @@ void display_vector(const std::vector<int> &v)
 {
     std::copy(v.begin(), v.end(),
         std::ostream_iterator<int>(std::cout, " "));
+    std::cout << "\n";
 }
 
 // x -> column, y -> line
 int solve(int x, int y, std::vector<int> limites_linhas, int square_size) {
     std::vector<int> lims = limites_linhas;
-    
+    lims.erase(lims.begin());
     int x2 = 0;
     int y2 = 0;
 
-    if (std::all_of(lims.cbegin(), lims.cend(), [](int i){ return i <= 1; })){
-        combinacoes++;
-        return combinacoes;
-    }
+    if (std::all_of(lims.cbegin(), lims.cend(), [](int i){ return i <= 1; }))
+        return 1;
+    
 
     if(square_size == 1 || canBuildSquare(y, x, square_size, limites_linhas) ) {
 
@@ -102,16 +103,27 @@ int solve(int x, int y, std::vector<int> limites_linhas, int square_size) {
         }
         x2 = last - 1;
         y2 = index;
-        /*
+
+
+        long long int combs_new = -1;
+        
         for(unsigned int i = 0; i < columns_configs.size(); i++) {
-            if(columns_configs[i] == new_line_limits) {
-                combinacoes++;
-                return combinacoes;
-            }
+            if(std::equal(new_line_limits.begin(), new_line_limits.end(), columns_configs[i].begin()) ) {
+                combs_new = columns_configs[i][new_line_limits.size()];             
+                break;
+            } 
         }     
-        columns_configs.push_back(new_line_limits);
-        */
-        return solve(x,y, limites_linhas, square_size + 1) + solve(x2,y2, new_line_limits, 1);
+        
+        if(combs_new == -1){
+            std::vector<int> lims_new;
+            
+            combs_new = solve(x2,y2, new_line_limits, 1);
+            lims_new = new_line_limits;
+            lims_new.push_back(combs_new);
+            columns_configs.push_back(lims_new);
+        }
+        long long int combs_same = solve(x,y, limites_linhas, square_size + 1);
+        return combs_new + combs_same;
     }
    
     return 0;
@@ -120,7 +132,6 @@ int solve(int x, int y, std::vector<int> limites_linhas, int square_size) {
 int main() {
     getInput();
     max_square = MaxSquare();
-
     if(N == 0 || M == 0) {
         std::cout << combinacoes << std::endl;
         return 0;
@@ -129,7 +140,7 @@ int main() {
         std::cout << combinacoes << std::endl;
         return 0;
     }
-    solve(lines_limits[N-1] - 1, N-1, lines_limits, 1);
+    combinacoes = solve(lines_limits[N-1] - 1, N-1, lines_limits, 1);
     std::cout << combinacoes << std::endl;
     return 0;
 }
