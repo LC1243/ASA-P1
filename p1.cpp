@@ -6,7 +6,7 @@
 #include<unistd.h>
 
 int N, M; // Num linhas, N colunas
-int combinacoes;
+long int combinacoes;
 int max_square;
 
 std::vector<int> lines_limits;
@@ -105,7 +105,7 @@ int solve(int x, int y, std::vector<int> limites_linhas, int square_size) {
         y2 = index;
 
 
-        long long int combs_new = -1;
+        long int combs_new = -1;
         
         for(unsigned int i = 0; i < columns_configs.size(); i++) {
             if(std::equal(new_line_limits.begin(), new_line_limits.end(), columns_configs[i].begin()) ) {
@@ -122,7 +122,7 @@ int solve(int x, int y, std::vector<int> limites_linhas, int square_size) {
             lims_new.push_back(combs_new);
             columns_configs.push_back(lims_new);
         }
-        long long int combs_same = solve(x,y, limites_linhas, square_size + 1);
+    long int combs_same = solve(x,y, limites_linhas, square_size + 1);
         return combs_new + combs_same;
     }
    
