@@ -110,8 +110,7 @@ long long int solve(int x, int y, std::vector<int> limites_linhas, int square_si
         
         for(unsigned int i = 0; i < columns_configs.size(); i++) {
             if(std::equal(new_line_limits.begin(), new_line_limits.end(), columns_configs[i].begin()) ) {
-                combs_new = memos[i];    
-                printf("%lld\n", memos[i]);       
+                combs_new = memos[i];         
                 break;
             } 
         }     
