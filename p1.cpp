@@ -14,7 +14,7 @@ int max_square;
 std::vector<int> lines_limits;
 
 // Key, value
-std::map<int, long long int> tree_map;
+std::map<long long int, long long int> tree_map;
 
 
 void getInput() {
@@ -80,12 +80,13 @@ void display_vector(const std::vector<int> &v)
 }
 
 
-int hash_function(std::vector<int> vec){
-    int result = 0;
+long long int hash_function(std::vector<int> vec){
+    long long int result = 0;
+    std::hash<long long int> vector_hash;
     for (auto d : vec)
         result = result * 10 + d;
 
-    return result % HASH_SIZE;
+    return vector_hash(result);
 
 }
 
@@ -122,7 +123,7 @@ long long int solve(int x, int y, std::vector<int> limites_linhas, int square_si
         long long int combs_new;
         long long int combs_same;
 
-        int key = hash_function(new_line_limits);
+        long long int key = hash_function(new_line_limits);
 
         if(tree_map.find(key)!=tree_map.end()){
             combs_new = tree_map[key];
