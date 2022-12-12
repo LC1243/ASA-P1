@@ -3,15 +3,19 @@
 #include <iterator>
 #include <algorithm>
 #include <functional>
-#include<unistd.h>
+#include <map>
+
+#define HASH_SIZE 1028
 
 int N, M; // Num linhas, N colunas
 long long int combinacoes;
 int max_square;
 
 std::vector<int> lines_limits;
-std::vector<std::vector<int>> columns_configs;
-std::vector<long long int> memos;
+
+// Key, value
+std::map<int, long long int> tree_map;
+
 
 void getInput() {
     int c;
@@ -75,6 +79,16 @@ void display_vector(const std::vector<int> &v)
     std::cout << "\n";
 }
 
+
+int hash_function(std::vector<int> vec){
+    int result = 0;
+    for (auto d : vec)
+        result = result * 10 + d;
+
+    return result % HASH_SIZE;
+
+}
+
 // x -> column, y -> line
 long long int solve(int x, int y, std::vector<int> limites_linhas, int square_size) {
     std::vector<int> lims = limites_linhas;
@@ -104,25 +118,21 @@ long long int solve(int x, int y, std::vector<int> limites_linhas, int square_si
         x2 = last - 1;
         y2 = index;
 
-
-        long long int combs_new = -1;
+        // Procura no Map (ou inserção)
+        long long int combs_new;
         long long int combs_same;
-        
-        for(unsigned int i = 0; i < columns_configs.size(); i++) {
-            if(std::equal(new_line_limits.begin(), new_line_limits.end(), columns_configs[i].begin()) ) {
-                combs_new = memos[i];         
-                break;
-            } 
-        }     
-        
-        if(combs_new == -1){
-            std::vector<int> lims_new;
-            
-            combs_new = solve(x2,y2, new_line_limits, 1);
-            
-            columns_configs.push_back(new_line_limits);
-            memos.push_back(combs_new);
+
+        int key = hash_function(new_line_limits);
+
+        if(tree_map.find(key)!=tree_map.end()){
+            combs_new = tree_map[key];
         }
+        else{
+            combs_new = solve(x2,y2, new_line_limits, 1);
+
+            tree_map.insert({key, combs_new});
+        }
+       
         combs_same = solve(x,y, limites_linhas, square_size + 1);
 
         return combs_new + combs_same;
