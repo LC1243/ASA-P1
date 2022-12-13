@@ -5,8 +5,6 @@
 #include <functional>
 #include <map>
 
-#define HASH_SIZE 1028
-
 int N, M; // Num linhas, N colunas
 long long unsigned int combinacoes;
 int max_square;
@@ -70,15 +68,6 @@ std::vector<int> decreaseLimit(int start_index, int size, std::vector<int> new_l
                
     return new_line_limits;
 }
-
-//note the const
-void display_vector(const std::vector<int> &v)
-{
-    std::copy(v.begin(), v.end(),
-        std::ostream_iterator<int>(std::cout, " "));
-    std::cout << "\n";
-}
-
 
 long long  unsigned int hash_function(std::vector<int> vec){
     long long unsigned int result = 0;
