@@ -8,13 +8,13 @@
 #define HASH_SIZE 1028
 
 int N, M; // Num linhas, N colunas
-long long int combinacoes;
+long long unsigned int combinacoes;
 int max_square;
 
 std::vector<int> lines_limits;
 
 // Key, value
-std::map<long long int, long long int> tree_map;
+std::map<long long unsigned int, long long unsigned int> tree_map;
 
 
 void getInput() {
@@ -80,9 +80,9 @@ void display_vector(const std::vector<int> &v)
 }
 
 
-long long int hash_function(std::vector<int> vec){
-    long long int result = 0;
-    std::hash<long long int> vector_hash;
+long long  unsigned int hash_function(std::vector<int> vec){
+    long long unsigned int result = 0;
+    std::hash<long long unsigned int> vector_hash;
     for (auto d : vec)
         result = result * 10 + d;
 
@@ -91,7 +91,7 @@ long long int hash_function(std::vector<int> vec){
 }
 
 // x -> column, y -> line
-long long int solve(int x, int y, std::vector<int> limites_linhas, int square_size) {
+long long unsigned int solve(int x, int y, std::vector<int> limites_linhas, int square_size) {
     std::vector<int> lims = limites_linhas;
     lims.erase(lims.begin());
     int x2 = 0;
@@ -120,10 +120,10 @@ long long int solve(int x, int y, std::vector<int> limites_linhas, int square_si
         y2 = index;
 
         // Procura no Map (ou inserção)
-        long long int combs_new;
-        long long int combs_same;
+        long long unsigned int combs_new;
+        long long unsigned int combs_same;
 
-        long long int key = hash_function(new_line_limits);
+        long long unsigned int key = hash_function(new_line_limits);
 
         if(tree_map.find(key)!=tree_map.end()){
             combs_new = tree_map[key];
